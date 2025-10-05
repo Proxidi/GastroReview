@@ -12,9 +12,4 @@ import java.util.UUID;
 public class UserResponse{
         UUID id;
         String email;
-        String name;
-        boolean active;
-        String photoUrl;
-        String bio;
-        OffsetDateTime createdAt;
 }

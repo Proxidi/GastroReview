@@ -12,8 +12,4 @@ public class UserRequest{
         @Email
         @NotBlank String email;
         @NotBlank String hashPassword;
-        String name;
-        Boolean active;
-        String photoUrl;
-        String bio;
 }

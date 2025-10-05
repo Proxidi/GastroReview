@@ -41,5 +41,7 @@ public class UserProfile {
 
     @Column(name = "bio")
     private String bio;
+
+
 }
 

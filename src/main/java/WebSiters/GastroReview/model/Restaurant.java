@@ -36,7 +36,7 @@ public class Restaurant {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
-    private Users owner; // ON DELETE SET NULL (a nivel DB)
+    private Users owner;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
