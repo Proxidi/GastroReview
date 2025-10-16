@@ -9,10 +9,13 @@ import WebSiters.GastroReview.repository.UsersRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -24,6 +27,34 @@ public class UsersService {
     public UsersService(UsersRepository repo) {
         this.repo = repo;
     }
+
+    // ===== NUEVOS: listados estilo StudentController =====
+
+    /** Listado completo sin paginación */
+    public List<UserResponse> findAll() {
+        return repo.findAll()
+                .stream()
+                .map(u -> Mappers.toResponse(u).build())
+                .collect(Collectors.toList());
+    }
+
+    /** Listado con paginación por parámetros page/pageSize */
+    public List<UserResponse> findAll(int page, int pageSize) {
+        PageRequest pr = PageRequest.of(page, pageSize);
+        return repo.findAll(pr)
+                .stream()
+                .map(u -> Mappers.toResponse(u).build())
+                .collect(Collectors.toList());
+    }
+
+    /** Búsqueda por email */
+    public UserResponse getByEmail(String email) {
+        Users u = repo.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
+        return Mappers.toResponse(u).build();
+    }
+
+    // ===== TUS MÉTODOS EXISTENTES (se mantienen) =====
 
     public Page<UserResponse> list(Pageable pageable) {
         return repo.findAll(pageable).map(u -> Mappers.toResponse(u).build());

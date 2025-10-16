@@ -9,6 +9,7 @@ import lombok.Data;
 @Data
 
 public class UserRequest{
+
         @Email
         @NotBlank String email;
         @NotBlank String hashPassword;
