@@ -19,7 +19,6 @@ public class UserPreference {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // N:1 hacia Users
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;

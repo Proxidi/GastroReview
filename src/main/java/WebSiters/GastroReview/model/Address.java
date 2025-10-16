@@ -31,7 +31,7 @@ public class Address {
     @Column(nullable = false, updatable = false)
     private OffsetDateTime createdAt;
 
-    // addresses (1) -> (N) restaurant_address
+
     @OneToMany(mappedBy = "address", fetch = FetchType.LAZY)
     @Builder.Default
     private List<RestaurantAddress> restaurantLinks = new ArrayList<>();

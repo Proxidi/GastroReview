@@ -7,7 +7,6 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.UUID;
 
-// UserRoleId.java
 @Embeddable
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @EqualsAndHashCode
 public class UserRoleId implements Serializable {

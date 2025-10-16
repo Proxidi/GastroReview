@@ -27,8 +27,7 @@ public class Users {
     @Column(name = "hash_password", nullable = false)
     private String hashPassword;
 
-    
-    
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     @PrimaryKeyJoinColumn
     private UserProfile profile;

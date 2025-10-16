@@ -20,7 +20,6 @@ public class RestaurantCategory {
 
     private String icon;
 
-    // N:M con restaurants a través de la tabla puente restaurant_category
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "restaurant_category",
             joinColumns = @JoinColumn(name = "category_id"),

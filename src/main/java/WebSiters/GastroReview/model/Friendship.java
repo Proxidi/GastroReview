@@ -15,13 +15,13 @@ public class Friendship {
     @EmbeddedId
     private FriendshipId id;
 
-    // follower
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("followerId")
     @JoinColumn(name = "follower_id", nullable = false)
     private Users follower;
 
-    // followed
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("followedId")
     @JoinColumn(name = "followed_id", nullable = false)

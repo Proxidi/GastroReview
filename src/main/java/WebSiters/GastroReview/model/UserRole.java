@@ -25,6 +25,6 @@ public class UserRole {
     private Role role;
 
     @CreationTimestamp
-    @Column(name = "assigned_at", nullable = false, updatable = false) // <-- ver punto 2
+    @Column(name = "assigned_at", nullable = false, updatable = false)
     private OffsetDateTime assignedAt;
 }
