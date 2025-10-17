@@ -1,6 +1,5 @@
 package WebSiters.GastroReview.model;
 
-import WebSiters.GastroReview.model.FriendshipId;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;

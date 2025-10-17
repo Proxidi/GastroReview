@@ -39,7 +39,7 @@ public class AddressService {
                 .neighborhood(in.getNeighborhood())
                 .city(in.getCity())
                 .stateRegion(in.getStateRegion())
-                .postalCode(in.getPostalCode())
+                .postalCode(Integer.valueOf(in.getPostalCode()))
                 .country(in.getCountry() != null ? in.getCountry() : "MX")
                 .latitude(in.getLatitude())
                 .longitude(in.getLongitude())
@@ -60,7 +60,7 @@ public class AddressService {
         if (in.getNeighborhood() != null) a.setNeighborhood(in.getNeighborhood());
         if (in.getCity() != null) a.setCity(in.getCity());
         if (in.getStateRegion() != null) a.setStateRegion(in.getStateRegion());
-        if (in.getPostalCode() != null) a.setPostalCode(in.getPostalCode());
+        if (in.getPostalCode() != null) a.setPostalCode(Integer.valueOf(in.getPostalCode()));
         if (in.getCountry() != null) a.setCountry(in.getCountry());
         if (in.getLatitude() != null) a.setLatitude(in.getLatitude());
         if (in.getLongitude() != null) a.setLongitude(in.getLongitude());

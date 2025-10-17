@@ -10,7 +10,7 @@ public class AddressRequest {
     private String neighborhood;
     private String city;
     private String stateRegion;
-    private String postalCode;
+    private Integer postalCode;
     private String country;
     private Double latitude;
     private Double longitude;

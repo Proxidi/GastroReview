@@ -22,7 +22,7 @@ public class Address {
     private String neighborhood;
     private String city;
     private String stateRegion;
-    private String postalCode;
+    private Integer postalCode;
     @Column(nullable = false) private String country = "MX";
     private Double latitude;
     private Double longitude;

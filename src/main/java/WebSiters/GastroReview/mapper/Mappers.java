@@ -59,12 +59,13 @@ public final class Mappers {
                 Optional.ofNullable(a.getNeighborhood()).orElse(""),
                 Optional.ofNullable(a.getCity()).orElse(""),
                 Optional.ofNullable(a.getStateRegion()).orElse(""),
-                Optional.ofNullable(a.getPostalCode()).orElse(""),
+                Optional.ofNullable(a.getPostalCode()).orElse(null),
                 Optional.ofNullable(a.getCountry()).orElse(""),
                 a.getLatitude(),
                 a.getLongitude()
         );
     }
+
 
     public static CategoryResponse toResponse(RestaurantCategory c) {
         if (c == null) return null;
