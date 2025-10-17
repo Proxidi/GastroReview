@@ -3,17 +3,28 @@ package WebSiters.GastroReview.controller;
 import WebSiters.GastroReview.dto.CategoryRequest;
 import WebSiters.GastroReview.dto.CategoryResponse;
 import WebSiters.GastroReview.service.RestaurantCategoryService;
+
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/restaurant-categories")
 @RequiredArgsConstructor
+@Validated
+@Tag(name = "Restaurant Categories", description = "CRUD operations to manage restaurant categories and types.")
 public class RestaurantCategoryController {
 
     private final RestaurantCategoryService service;
@@ -22,10 +33,18 @@ public class RestaurantCategoryController {
             summary = "Create restaurant category",
             description = "Creates a new restaurant category with the provided details."
     )
-    @ApiResponse(responseCode = "201", description = "Category created successfully")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Category created successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CategoryResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid category data"),
+            @ApiResponse(responseCode = "409", description = "Category name already exists")
+    })
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryResponse create(@RequestBody CategoryRequest req) {
+    public CategoryResponse create(
+            @Parameter(description = "Category data", required = true)
+            @RequestBody @Validated CategoryRequest req) {
         return service.create(req);
     }
 
@@ -33,32 +52,50 @@ public class RestaurantCategoryController {
             summary = "Get restaurant category",
             description = "Retrieves a restaurant category by its ID."
     )
-    @ApiResponse(responseCode = "200", description = "Category retrieved successfully")
-    @ApiResponse(responseCode = "404", description = "Category not found")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Category retrieved successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CategoryResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
     @GetMapping("/{id}")
-    public CategoryResponse get(@PathVariable("id") Integer id) {
+    public CategoryResponse get(
+            @Parameter(description = "Category ID", required = true)
+            @PathVariable("id") Integer id) {
         return service.get(id);
     }
 
     @Operation(
-            summary = "List restaurants",
-            description = "Retrieves a paginated list of restaurants."
+            summary = "List restaurant categories",
+            description = "Retrieves a paginated list (5 per page) of all restaurant categories."
     )
-    @ApiResponse(responseCode = "200", description = "List retrieved successfully")
+    @ApiResponse(responseCode = "200", description = "List retrieved successfully",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = CategoryResponse.class))))
     @GetMapping
-    public Page<CategoryResponse> list(Pageable pageable) {
-        return service.list(pageable);
+    public Page<CategoryResponse> list(
+            @Parameter(description = "Pagination parameters") Pageable pageable) {
+        Pageable fixedPageable = Pageable.ofSize(5).withPage(pageable.getPageNumber());
+        return service.list(fixedPageable);
     }
 
     @Operation(
             summary = "Update restaurant category",
             description = "Updates an existing restaurant category with the provided information."
     )
-    @ApiResponse(responseCode = "200", description = "Category updated successfully")
-    @ApiResponse(responseCode = "404", description = "Category not found")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Category updated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = CategoryResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Category not found"),
+            @ApiResponse(responseCode = "409", description = "Category name already exists")
+    })
     @PutMapping("/{id}")
-    public CategoryResponse update(@PathVariable("id") Integer id,
-                                   @RequestBody CategoryRequest req) {
+    public CategoryResponse update(
+            @Parameter(description = "Category ID", required = true)
+            @PathVariable("id") Integer id,
+            @Parameter(description = "Updated category data", required = true)
+            @RequestBody @Validated CategoryRequest req) {
         return service.update(id, req);
     }
 
@@ -66,11 +103,15 @@ public class RestaurantCategoryController {
             summary = "Delete restaurant category",
             description = "Deletes a restaurant category by its ID."
     )
-    @ApiResponse(responseCode = "204", description = "Category deleted successfully")
-    @ApiResponse(responseCode = "404", description = "Category not found")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Category deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "Category not found")
+    })
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable("id") Integer id) {
+    public void delete(
+            @Parameter(description = "Category ID", required = true)
+            @PathVariable("id") Integer id) {
         service.delete(id);
     }
 }

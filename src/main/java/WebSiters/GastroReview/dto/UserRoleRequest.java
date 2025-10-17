@@ -12,7 +12,7 @@ public class UserRoleRequest {
     private UUID userId;
 
     @NotNull
-    private Integer roleId;
+    private UUID roleId;
 
 }
 

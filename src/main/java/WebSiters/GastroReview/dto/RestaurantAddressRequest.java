@@ -9,7 +9,7 @@ import java.util.UUID;
 @Data
 public class RestaurantAddressRequest {
     private UUID restaurantId;
-    private Long addressId;
+    private UUID addressId;
     private Boolean isPrimary;
     private String branchName;
 }

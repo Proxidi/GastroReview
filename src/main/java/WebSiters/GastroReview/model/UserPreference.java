@@ -8,6 +8,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.UUID;
 
 @Entity
 @Table(name = "user_preferences",
@@ -17,7 +18,7 @@ public class UserPreference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

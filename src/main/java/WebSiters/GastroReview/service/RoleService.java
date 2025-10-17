@@ -10,7 +10,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.UUID;
 
 @Service
 public class RoleService {
@@ -21,24 +24,35 @@ public class RoleService {
         this.repo = repo;
     }
 
-    public Page<RoleResponse> list(Pageable pageable) {
-        return repo.findAll(pageable).map(Mappers::toResponse);
+    @Transactional(readOnly = true)
+    public Page<RoleResponse> list(String name, Pageable pageable) {
+        Page<Role> roles;
+        if (name == null || name.isBlank()) {
+            roles = repo.findAll(pageable);
+        } else {
+            roles = repo.findByNameContainingIgnoreCase(name, pageable);
+        }
+        return roles.map(Mappers::toResponse);
     }
 
-    public RoleResponse get(Integer id) {
-        Role r = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
+    @Transactional(readOnly = true)
+    public RoleResponse get(UUID id) {
+        Role r = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
         return Mappers.toResponse(r);
     }
 
+    @Transactional
     public RoleResponse create(RoleRequest in) {
         if (repo.existsByNameIgnoreCase(in.getName())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Role name already exists");
         }
+
         Role r = Role.builder()
                 .name(in.getName())
                 .description(in.getDescription())
                 .build();
+
         try {
             r = repo.save(r);
             return Mappers.toResponse(r);
@@ -47,9 +61,10 @@ public class RoleService {
         }
     }
 
-    public RoleResponse update(Integer id, RoleRequest in) {
-        Role r = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
+    @Transactional
+    public RoleResponse update(UUID id, RoleRequest in) {
+        Role r = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found"));
 
         if (in.getName() != null && !in.getName().equalsIgnoreCase(r.getName())) {
             if (repo.existsByNameIgnoreCaseAndIdNot(in.getName(), id)) {
@@ -57,6 +72,7 @@ public class RoleService {
             }
             r.setName(in.getName());
         }
+
         if (in.getDescription() != null) r.setDescription(in.getDescription());
 
         try {
@@ -67,7 +83,8 @@ public class RoleService {
         }
     }
 
-    public void delete(Integer id) {
+    @Transactional
+    public void delete(UUID id) {
         if (!repo.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found");
         }

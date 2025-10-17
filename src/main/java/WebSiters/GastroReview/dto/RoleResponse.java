@@ -11,7 +11,7 @@ import java.util.UUID;
 @Builder
 
 public class RoleResponse {
-     Integer id;
+     UUID id;
      String name;
      String description;
 }

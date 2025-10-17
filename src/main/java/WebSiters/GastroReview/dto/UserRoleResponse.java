@@ -10,6 +10,6 @@ import java.util.UUID;
 @Getter @Setter @AllArgsConstructor
 public class UserRoleResponse {
     private UUID userId;
-    private Integer roleId;
+    private UUID roleId;
     private OffsetDateTime assignedAt;
 }

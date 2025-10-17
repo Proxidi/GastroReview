@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -27,16 +28,31 @@ public class UserPreferenceService {
         this.usersRepo = usersRepo;
     }
 
-    public Page<UserPreferenceResponse> list(Pageable pageable) {
-        return repo.findAll(pageable).map(Mappers::toResponse);
+    @Transactional(readOnly = true)
+    public Page<UserPreferenceResponse> list(UUID userId, String prefKey, Pageable pageable) {
+        Page<UserPreference> preferences;
+
+        if (userId != null && prefKey != null && !prefKey.isBlank()) {
+            preferences = repo.findByUser_IdAndPrefKeyContainingIgnoreCase(userId, prefKey.trim(), pageable);
+        } else if (userId != null) {
+            preferences = repo.findByUser_Id(userId, pageable);
+        } else if (prefKey != null && !prefKey.isBlank()) {
+            preferences = repo.findByPrefKeyContainingIgnoreCase(prefKey.trim(), pageable);
+        } else {
+            preferences = repo.findAll(pageable);
+        }
+
+        return preferences.map(Mappers::toResponse);
     }
 
-    public UserPreferenceResponse get(Long id) {
-        UserPreference p = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Preference not found"));
+    @Transactional(readOnly = true)
+    public UserPreferenceResponse get(UUID id) {
+        UserPreference p = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Preference not found"));
         return Mappers.toResponse(p);
     }
 
+    @Transactional
     public UserPreferenceResponse create(UserPreferenceRequest in) {
         UUID userId = in.getUserId();
 
@@ -44,8 +60,8 @@ public class UserPreferenceService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Preference key already exists for user");
         }
 
-        Users user = usersRepo.findById(userId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Users user = usersRepo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
         UserPreference p = UserPreference.builder()
                 .user(user)
@@ -61,9 +77,10 @@ public class UserPreferenceService {
         }
     }
 
-    public UserPreferenceResponse update(Long id, UserPreferenceRequest in) {
-        UserPreference p = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Preference not found"));
+    @Transactional
+    public UserPreferenceResponse update(UUID id, UserPreferenceRequest in) {
+        UserPreference p = repo.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Preference not found"));
 
         UUID targetUserId = (in.getUserId() != null) ? in.getUserId() : p.getUser().getId();
 
@@ -75,8 +92,8 @@ public class UserPreferenceService {
         }
 
         if (in.getUserId() != null) {
-            Users newUser = usersRepo.findById(in.getUserId()).orElseThrow(() ->
-                    new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            Users newUser = usersRepo.findById(in.getUserId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
             p.setUser(newUser);
         }
 
@@ -90,7 +107,8 @@ public class UserPreferenceService {
         }
     }
 
-    public void delete(Long id) {
+    @Transactional
+    public void delete(UUID id) {
         if (!repo.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Preference not found");
         }

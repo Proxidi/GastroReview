@@ -1,8 +1,8 @@
 package WebSiters.GastroReview.controller;
 
-import WebSiters.GastroReview.service.UsersService;
 import WebSiters.GastroReview.dto.UserRequest;
 import WebSiters.GastroReview.dto.UserResponse;
+import WebSiters.GastroReview.service.UsersService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,123 +15,109 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-@Tag(name = "Users", description = "CRUD operations for Users")
+@Validated
+@Tag(name = "Users", description = "CRUD operations and search endpoints for user management.")
 public class UsersController {
 
     private final UsersService service;
 
-    // ============================
-    // GET ALL USERS
-    // ============================
     @GetMapping
-    @Operation(summary = "Get all users",
-            description = "Retrieves a list of all registered users in the system.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of users retrieved successfully",
-                    content = @Content(mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = UserResponse.class)))),
-            @ApiResponse(responseCode = "500", description = "Internal server error",
-                    content = @Content)
-    })
-    public List<UserResponse> findAll() {
-        return service.findAll();
+    @Operation(summary = "List users (paginated and filtered)",
+            description = "Retrieves a paginated and optionally filtered list of users.")
+    @ApiResponse(responseCode = "200", description = "List retrieved successfully",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = UserResponse.class))))
+    public Page<UserResponse> list(
+            @Parameter(description = "Optional email filter") @RequestParam(required = false) String email,
+            @Parameter(description = "Pagination parameters (page, size, sort)") Pageable pageable) {
+        return service.list(email, pageable);
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get user by ID",
-            description = "Fetches a specific user based on their unique identifier (UUID).")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User found successfully",
+    @Operation(summary = "Get user by ID", description = "Fetches a user by their unique UUID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserResponse get(
-            @Parameter(description = "Unique identifier of the user", required = true)
+            @Parameter(description = "User UUID", required = true)
             @PathVariable("id") UUID id) {
         return service.get(id);
     }
 
     @PostMapping
-    @Operation(summary = "Create a new user",
-            description = "Registers a new user in the system using the provided request body.")
-    @ApiResponses(value = {
+    @Operation(summary = "Create a new user", description = "Registers a new user in the system.")
+    @ApiResponses({
             @ApiResponse(responseCode = "201", description = "User created successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data",
-                    content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid request data"),
+            @ApiResponse(responseCode = "409", description = "Email already exists")
     })
     public ResponseEntity<UserResponse> create(
-            @Parameter(description = "User data for creation", required = true)
+            @Parameter(description = "User data payload", required = true)
             @Valid @RequestBody UserRequest in) {
-
         UserResponse created = service.create(in);
         return ResponseEntity.created(URI.create("/api/users/" + created.getId()))
                 .body(created);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update an existing user",
-            description = "Updates the information of an existing user identified by their UUID.")
-    @ApiResponses(value = {
+    @Operation(summary = "Update user", description = "Updates the email or password of an existing user.")
+    @ApiResponses({
             @ApiResponse(responseCode = "200", description = "User updated successfully",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid input data",
-                    content = @Content),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content)
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "409", description = "Email already exists")
     })
     public UserResponse update(
-            @Parameter(description = "UUID of the user to update", required = true)
+            @Parameter(description = "User UUID", required = true)
             @PathVariable("id") UUID id,
-            @Parameter(description = "Updated user data", required = true)
+            @Parameter(description = "Updated user payload", required = true)
             @Valid @RequestBody UserRequest in) {
-
         return service.update(id, in);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(summary = "Delete a user by ID",
-            description = "Removes a user from the system using their unique UUID.")
-    @ApiResponses(value = {
+    @Operation(summary = "Delete user", description = "Removes a user permanently by their unique UUID.")
+    @ApiResponses({
             @ApiResponse(responseCode = "204", description = "User deleted successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public void delete(
-            @Parameter(description = "UUID of the user to delete", required = true)
+            @Parameter(description = "User UUID", required = true)
             @PathVariable("id") UUID id) {
-
         service.delete(id);
     }
 
     @GetMapping("/search/{email}")
-    @Operation(summary = "Get user by email",
-            description = "Retrieves a user using their unique email address.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User found successfully",
+    @Operation(summary = "Get user by email", description = "Fetches a user record by their registered email address.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User found",
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UserResponse.class))),
-            @ApiResponse(responseCode = "404", description = "User not found",
-                    content = @Content)
+            @ApiResponse(responseCode = "404", description = "User not found")
     })
     public UserResponse getByEmail(
-            @Parameter(description = "Email of the user to search", required = true)
+            @Parameter(description = "Email address of the user", required = true)
             @PathVariable String email) {
         return service.getByEmail(email);
     }

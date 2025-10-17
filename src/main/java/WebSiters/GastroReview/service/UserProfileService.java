@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
@@ -26,20 +27,34 @@ public class UserProfileService {
         this.usersRepo = usersRepo;
     }
 
-    public Page<UserProfileResponse> list(Pageable pageable) {
-        return repo.findAll(pageable).map(Mappers::toResponse);
+    @Transactional(readOnly = true)
+    public Page<UserProfileResponse> list(String name, String bio, Boolean active, Pageable pageable) {
+        Page<UserProfile> profiles;
+
+        if (name != null && !name.isBlank()) {
+            profiles = repo.findByNameContainingIgnoreCase(name.trim(), pageable);
+        } else if (bio != null && !bio.isBlank()) {
+            profiles = repo.findByBioContainingIgnoreCase(bio.trim(), pageable);
+        } else if (active != null) {
+            profiles = repo.findByActive(active, pageable);
+        } else {
+            profiles = repo.findAll(pageable);
+        }
+
+        return profiles.map(Mappers::toResponse);
     }
 
+    @Transactional(readOnly = true)
     public UserProfileResponse get(UUID userId) {
-        UserProfile p = repo.findById(userId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User profile not found"));
+        UserProfile p = repo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User profile not found"));
         return Mappers.toResponse(p);
     }
 
-    /** Upsert: crea o actualiza el perfil para userId */
+    @Transactional
     public UserProfileResponse upsert(UserProfileRequest in) {
-        Users user = usersRepo.findById(in.getUserId()).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist"));
+        Users user = usersRepo.findById(in.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist"));
 
         UserProfile p = repo.findById(in.getUserId()).orElse(new UserProfile());
         p.setUser(user);
@@ -53,9 +68,10 @@ public class UserProfileService {
         return Mappers.toResponse(p);
     }
 
+    @Transactional
     public UserProfileResponse update(UUID userId, UserProfileRequest in) {
-        UserProfile p = repo.findById(userId).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "User profile not found"));
+        UserProfile p = repo.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User profile not found"));
 
         if (in.getPhotoUrl() != null) p.setPhotoUrl(in.getPhotoUrl());
         if (in.getName() != null) p.setName(in.getName());
@@ -66,6 +82,7 @@ public class UserProfileService {
         return Mappers.toResponse(p);
     }
 
+    @Transactional
     public void delete(UUID userId) {
         if (!repo.existsById(userId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User profile not found");
@@ -73,4 +90,3 @@ public class UserProfileService {
         repo.deleteById(userId);
     }
 }
-

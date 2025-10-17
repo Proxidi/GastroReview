@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "addresses")
@@ -15,7 +16,7 @@ public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false) private String street;
     private String site;

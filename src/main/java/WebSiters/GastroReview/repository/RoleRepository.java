@@ -1,12 +1,16 @@
 package WebSiters.GastroReview.repository;
 
-
 import WebSiters.GastroReview.model.Role;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RoleRepository extends JpaRepository<Role, Integer> {
-    boolean existsByNameIgnoreCase(String name);
+import java.util.UUID;
 
-    boolean existsByNameIgnoreCaseAndIdNot(@NotBlank String name, Integer id);
+public interface RoleRepository extends JpaRepository<Role, UUID> {
+    boolean existsByNameIgnoreCase(String name);
+    boolean existsByNameIgnoreCaseAndIdNot(@NotBlank String name, UUID id);
+
+    Page<Role> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

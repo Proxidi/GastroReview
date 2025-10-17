@@ -9,7 +9,7 @@ import java.util.UUID;
 @Getter @Setter @AllArgsConstructor
 public class RestaurantAddressResponse {
     private UUID restaurantId;
-    private Long addressId;
+    private UUID addressId;
     private boolean isPrimary;
     private String branchName;
 }

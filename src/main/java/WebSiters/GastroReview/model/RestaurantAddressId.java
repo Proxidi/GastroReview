@@ -12,6 +12,6 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RestaurantAddressId implements Serializable {
     private UUID restaurantId;
-    private Long addressId;
+    private UUID addressId;
 }
 

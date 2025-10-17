@@ -6,13 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class UserPreferenceResponse {
 
-    private Long id;
+    private UUID id;
 
     @JsonProperty("key")
     private String prefKey;

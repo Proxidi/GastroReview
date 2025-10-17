@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.Builder;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class AddressResponse {
-    private Long id;
+    private UUID id;
     private String street;
     private String site;
     private String neighborhood;

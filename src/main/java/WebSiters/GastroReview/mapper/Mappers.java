@@ -52,6 +52,7 @@ public final class Mappers {
 
     public static AddressResponse toResponse(Address a) {
         if (a == null) return null;
+
         return new AddressResponse(
                 a.getId(),
                 Optional.ofNullable(a.getStreet()).orElse(""),
@@ -59,12 +60,13 @@ public final class Mappers {
                 Optional.ofNullable(a.getNeighborhood()).orElse(""),
                 Optional.ofNullable(a.getCity()).orElse(""),
                 Optional.ofNullable(a.getStateRegion()).orElse(""),
-                Optional.ofNullable(a.getPostalCode()).orElse(null),
+                a.getPostalCode(),
                 Optional.ofNullable(a.getCountry()).orElse(""),
                 a.getLatitude(),
                 a.getLongitude()
         );
     }
+
 
 
     public static CategoryResponse toResponse(RestaurantCategory c) {
