@@ -10,5 +10,5 @@ public interface ReviewAudioRepository extends JpaRepository<ReviewAudio, Long> 
     
     List<ReviewAudio> findByReviewId(UUID reviewId);
     
-    boolean existsByIdAndReviewId(Long id, UUID reviewId);
+    void deleteByReviewId(UUID reviewId);
 }

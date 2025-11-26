@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment Variables (Credentials) ###
+.env
+.env.local
+*.env
+application-local.properties
+application-prod.properties
+
+### Windows special files ###
+nul

@@ -32,6 +32,7 @@ public class UserProfile {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Builder.Default
     @Column(name = "active", nullable = false)
     private boolean active = true;
 

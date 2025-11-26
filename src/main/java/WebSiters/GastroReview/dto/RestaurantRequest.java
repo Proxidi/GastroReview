@@ -8,11 +8,10 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-
 public class RestaurantRequest{
-        @NotBlank String name;
-        String description;
-        String phone;
-        String email;
-        UUID ownerId;
+        @NotBlank public String name;
+        public String description;
+        public String phone;
+        public String email;
+        public UUID ownerId;
 }

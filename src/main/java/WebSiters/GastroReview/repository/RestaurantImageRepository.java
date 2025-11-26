@@ -12,5 +12,7 @@ public interface RestaurantImageRepository extends JpaRepository<RestaurantImage
     
     List<RestaurantImage> findByUploadedBy(UUID uploadedBy);
     
-    boolean existsByIdAndRestaurantId(Long id, UUID restaurantId);
+    List<RestaurantImage> findByRestaurantIdOrderByCreatedAtDesc(UUID restaurantId);
+    
+    void deleteByRestaurantId(UUID restaurantId);
 }

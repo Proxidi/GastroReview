@@ -1,21 +1,13 @@
 package WebSiters.GastroReview.repository;
 
-
-import WebSiters.GastroReview.model.UserProfile;
+import WebSiters.GastroReview.model.RestaurantCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-public interface RestaurantCategoryRepository<RestaurantCategory> extends JpaRepository<RestaurantCategory, UUID> {
+public interface RestaurantCategoryRepository extends JpaRepository<RestaurantCategory, Integer> {
 
-    
-    List<RestaurantCategory> findByRestaurantId(UUID restaurantId);
-    
-    Optional<RestaurantCategory> findByRestaurantIdAndCategoryId(UUID restaurantId, Integer categoryId);
-    
-    void deleteByRestaurantIdAndCategoryId(UUID restaurantId, Integer categoryId);
-    
-    boolean existsByRestaurantIdAndCategoryId(UUID restaurantId, Integer categoryId);
+    Optional<RestaurantCategory> findByName(String name);
+
+    boolean existsByName(String name);
 }

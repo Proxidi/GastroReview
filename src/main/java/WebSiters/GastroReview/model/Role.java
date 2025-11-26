@@ -1,27 +1,16 @@
 package WebSiters.GastroReview.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+public enum Role {
+    USER("ROLE_USER"),
+    ADMIN("ROLE_ADMIN");
 
-@Entity
-@Table(name = "roles")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class Role {
+    private final String authority;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    Role(String authority) {
+        this.authority = authority;
+    }
 
-    @NotBlank
-    @Column(name = "name", nullable = false, unique = true)
-    private String name;
-
-    @Column(name = "description")
-    private String description;
+    public String getAuthority() {
+        return authority;
+    }
 }
-
-
-
-
-

@@ -10,5 +10,5 @@ public interface ReviewImageRepository extends JpaRepository<ReviewImage, Long> 
     
     List<ReviewImage> findByReviewId(UUID reviewId);
     
-    boolean existsByIdAndReviewId(Long id, UUID reviewId);
+    void deleteByReviewId(UUID reviewId);
 }

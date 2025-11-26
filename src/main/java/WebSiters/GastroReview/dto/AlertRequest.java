@@ -5,19 +5,14 @@ import java.util.UUID;
 
 public record AlertRequest(
     @NotBlank(message = "Type is required")
-    @Pattern(regexp = "negative_review|spam|trending|fraud|other",
-             message = "Type must be: negative_review, spam, trending, fraud, or other")
+    @Pattern(regexp = "spam|inappropriate|fake|other", 
+             message = "Type must be: spam, inappropriate, fake, or other")
     String type,
 
     UUID restaurantId,
 
     UUID reviewId,
 
+    @Size(max = 1000, message = "Detail must not exceed 1000 characters")
     String detail
-) {
-    public AlertRequest {
-        if (restaurantId == null && reviewId == null) {
-            throw new IllegalArgumentException("Either restaurantId or reviewId must be provided");
-        }
-    }
-}
+) {}

@@ -1,7 +1,6 @@
 package WebSiters.GastroReview.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -11,10 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "dishes")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Dish {
 
     @Id
@@ -45,4 +40,83 @@ public class Dish {
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private OffsetDateTime createdAt;
+
+    public Dish() {}
+
+    public Dish(UUID id, UUID restaurantId, Restaurant restaurant, String name, 
+               String description, Integer priceCents, boolean available, 
+               OffsetDateTime createdAt) {
+        this.id = id;
+        this.restaurantId = restaurantId;
+        this.restaurant = restaurant;
+        this.name = name;
+        this.description = description;
+        this.priceCents = priceCents;
+        this.available = available;
+        this.createdAt = createdAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(UUID restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Integer getPriceCents() {
+        return priceCents;
+    }
+
+    public void setPriceCents(Integer priceCents) {
+        this.priceCents = priceCents;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
+    public OffsetDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(OffsetDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }

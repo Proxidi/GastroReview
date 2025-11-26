@@ -9,11 +9,12 @@ public record NotificationRequest(
     UUID userId,
 
     @NotBlank(message = "Type is required")
-    @Pattern(regexp = "friendship|comment|rating|achievement|favorite|alert|other",
-             message = "Type must be: friendship, comment, rating, achievement, favorite, alert, or other")
+    @Pattern(regexp = "review|favorite|alert|system|other", 
+             message = "Type must be: review, favorite, alert, system, or other")
     String type,
 
     @NotBlank(message = "Message is required")
+    @Size(max = 500, message = "Message must not exceed 500 characters")
     String message,
 
     Boolean read,

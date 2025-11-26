@@ -15,7 +15,7 @@ public interface FavoriteReviewRepository extends JpaRepository<FavoriteReview, 
     
     Optional<FavoriteReview> findByUserIdAndReviewId(UUID userId, UUID reviewId);
     
-    void deleteByUserIdAndReviewId(UUID userId, UUID reviewId);
-    
     boolean existsByUserIdAndReviewId(UUID userId, UUID reviewId);
+    
+    void deleteByUserIdAndReviewId(UUID userId, UUID reviewId);
 }

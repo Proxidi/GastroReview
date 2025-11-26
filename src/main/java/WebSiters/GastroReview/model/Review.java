@@ -1,7 +1,6 @@
 package WebSiters.GastroReview.model;
 
 import jakarta.persistence.*;
-import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -11,10 +10,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "reviews")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Review {
 
     @Id
@@ -61,4 +56,119 @@ public class Review {
     @CreationTimestamp
     @Column(name = "published_at", nullable = false, updatable = false)
     private OffsetDateTime publishedAt;
+
+    public Review() {}
+
+    public Review(UUID id, UUID userId, Users user, UUID restaurantId, Restaurant restaurant, 
+                 UUID dishId, Dish dish, String title, String content, boolean hasAudio, 
+                 boolean hasImage, OffsetDateTime publishedAt) {
+        this.id = id;
+        this.userId = userId;
+        this.user = user;
+        this.restaurantId = restaurantId;
+        this.restaurant = restaurant;
+        this.dishId = dishId;
+        this.dish = dish;
+        this.title = title;
+        this.content = content;
+        this.hasAudio = hasAudio;
+        this.hasImage = hasImage;
+        this.publishedAt = publishedAt;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public Users getUser() {
+        return user;
+    }
+
+    public void setUser(Users user) {
+        this.user = user;
+    }
+
+    public UUID getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(UUID restaurantId) {
+        this.restaurantId = restaurantId;
+    }
+
+    public Restaurant getRestaurant() {
+        return restaurant;
+    }
+
+    public void setRestaurant(Restaurant restaurant) {
+        this.restaurant = restaurant;
+    }
+
+    public UUID getDishId() {
+        return dishId;
+    }
+
+    public void setDishId(UUID dishId) {
+        this.dishId = dishId;
+    }
+
+    public Dish getDish() {
+        return dish;
+    }
+
+    public void setDish(Dish dish) {
+        this.dish = dish;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public boolean isHasAudio() {
+        return hasAudio;
+    }
+
+    public void setHasAudio(boolean hasAudio) {
+        this.hasAudio = hasAudio;
+    }
+
+    public boolean isHasImage() {
+        return hasImage;
+    }
+
+    public void setHasImage(boolean hasImage) {
+        this.hasImage = hasImage;
+    }
+
+    public OffsetDateTime getPublishedAt() {
+        return publishedAt;
+    }
+
+    public void setPublishedAt(OffsetDateTime publishedAt) {
+        this.publishedAt = publishedAt;
+    }
 }

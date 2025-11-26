@@ -1,0 +1,333 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+# Queries
+type Query {
+  # Restaurant queries
+  findAllRestaurants: [RestaurantResponse]
+  findRestaurantById(id: ID): RestaurantResponse
+
+  # Dish queries
+  findAllDishes: [DishResponse]
+  findDishById(id: ID): DishResponse
+  findDishesByRestaurant(restaurantId: ID): [DishResponse]
+
+  # Review queries
+  findAllReviews: [ReviewResponse]
+  findReviewById(id: ID): ReviewResponse
+  findReviewsByRestaurant(restaurantId: ID): [ReviewResponse]
+  findReviewsByUser(userId: ID): [ReviewResponse]
+
+  # Address queries
+  findAllAddresses: [AddressResponse]
+  findAddressById(id: ID): AddressResponse
+
+  # User queries
+  findAllUsers: [UserResponse]
+  findUserById(id: ID): UserResponse
+  findUserByEmail(email: String): UserResponse
+
+  # Review Image queries
+  findAllReviewImages: [ReviewImageResponse]
+  findReviewImageById(id: ID): ReviewImageResponse
+  findReviewImagesByReview(reviewId: ID): [ReviewImageResponse]
+
+  # Review Audio queries
+  findAllReviewAudios: [ReviewAudioResponse]
+  findReviewAudioById(id: ID): ReviewAudioResponse
+  findReviewAudiosByReview(reviewId: ID): [ReviewAudioResponse]
+
+  # Favorite Restaurant queries
+  findAllFavoriteRestaurants: [FavoriteRestaurantResponse]
+  findFavoriteRestaurantsByUser(userId: ID): [FavoriteRestaurantResponse]
+
+  # Favorite Review queries
+  findAllFavoriteReviews: [FavoriteReviewResponse]
+  findFavoriteReviewsByUser(userId: ID): [FavoriteReviewResponse]
+
+  # Restaurant Image queries
+  findAllRestaurantImages: [RestaurantImageResponse]
+  findRestaurantImageById(id: ID): RestaurantImageResponse
+  findRestaurantImagesByRestaurant(restaurantId: ID): [RestaurantImageResponse]
+
+  # Restaurant Category queries
+  findAllRestaurantCategories: [RestaurantCategoryResponse]
+  findRestaurantCategoryById(id: ID): RestaurantCategoryResponse
+
+  # Alert queries
+  findAllAlerts: [AlertResponse]
+  findAlertById(id: ID): AlertResponse
+
+  # Notification queries
+  findAllNotifications: [NotificationResponse]
+  findNotificationById(id: ID): NotificationResponse
+  findNotificationsByUser(userId: ID): [NotificationResponse]
+}
+
+# Response Types
+type RestaurantResponse {
+  id: ID!
+  name: String!
+  description: String
+  phone: String
+  email: String
+  ownerId: ID
+  createdAt: String!
+}
+
+type DishResponse {
+  id: ID!
+  restaurantId: ID!
+  name: String!
+  description: String
+  priceCents: Int!
+  available: Boolean!
+  createdAt: String!
+}
+
+type ReviewResponse {
+  id: ID!
+  userId: ID!
+  restaurantId: ID!
+  dishId: ID
+  title: String
+  content: String
+  hasAudio: Boolean!
+  hasImage: Boolean!
+  publishedAt: String!
+}
+
+type AddressResponse {
+  id: ID!
+  street: String!
+  site: String
+  neighborhood: String
+  city: String
+  stateRegion: String
+  postalCode: String
+  country: String!
+  latitude: Float
+  longitude: Float
+  createdAt: String!
+}
+
+type UserResponse {
+  id: ID!
+  email: String!
+}
+
+type ReviewImageResponse {
+  id: ID!
+  reviewId: ID!
+  url: String!
+  altText: String
+}
+
+type ReviewAudioResponse {
+  id: ID!
+  reviewId: ID!
+  url: String!
+  durationSeconds: Int
+  transcription: String
+}
+
+type FavoriteRestaurantResponse {
+  userId: ID!
+  restaurantId: ID!
+  createdAt: String!
+}
+
+type FavoriteReviewResponse {
+  userId: ID!
+  reviewId: ID!
+  createdAt: String!
+}
+
+type RestaurantImageResponse {
+  id: ID!
+  restaurantId: ID!
+  url: String!
+  altText: String
+  uploadedBy: ID
+  createdAt: String!
+}
+
+type RestaurantCategoryResponse {
+  id: ID!
+  name: String!
+  icon: String!
+}
+
+type AlertResponse {
+  id: ID!
+  type: String!
+  restaurantId: ID
+  reviewId: ID
+  detail: String
+  createdAt: String!
+}
+
+type NotificationResponse {
+  id: ID!
+  userId: ID!
+  type: String!
+  message: String!
+  read: Boolean!
+  referenceId: ID
+  createdAt: String!
+}
+
+# Mutations
+type Mutation {
+  # Review mutations
+  createReview(req: ReviewRequest!): ReviewResponse
+  updateReview(id: ID!, req: ReviewRequest!): ReviewResponse
+  deleteReview(id: ID!): Boolean
+
+  # Restaurant mutations
+  createRestaurant(req: RestaurantRequest!): RestaurantResponse
+  updateRestaurant(id: ID!, req: RestaurantRequest!): RestaurantResponse
+  deleteRestaurant(id: ID!): Boolean
+
+  # Dish mutations
+  createDish(req: DishRequest!): DishResponse
+  updateDish(id: ID!, req: DishRequest!): DishResponse
+  deleteDish(id: ID!): Boolean
+
+  # Address mutations
+  createAddress(req: AddressRequest!): AddressResponse
+  updateAddress(id: ID!, req: AddressRequest!): AddressResponse
+  deleteAddress(id: ID!): Boolean
+
+  # Review Image mutations
+  createReviewImage(req: ReviewImageRequest!): ReviewImageResponse
+  updateReviewImage(id: ID!, req: ReviewImageRequest!): ReviewImageResponse
+  deleteReviewImage(id: ID!): Boolean
+
+  # Review Audio mutations
+  createReviewAudio(req: ReviewAudioRequest!): ReviewAudioResponse
+  updateReviewAudio(id: ID!, req: ReviewAudioRequest!): ReviewAudioResponse
+  deleteReviewAudio(id: ID!): Boolean
+
+  # Favorite Restaurant mutations
+  createFavoriteRestaurant(req: FavoriteRestaurantRequest!): FavoriteRestaurantResponse
+  deleteFavoriteRestaurant(userId: ID!, restaurantId: ID!): Boolean
+
+  # Favorite Review mutations
+  createFavoriteReview(req: FavoriteReviewRequest!): FavoriteReviewResponse
+  deleteFavoriteReview(userId: ID!, reviewId: ID!): Boolean
+
+  # Restaurant Image mutations
+  createRestaurantImage(req: RestaurantImageRequest!): RestaurantImageResponse
+  updateRestaurantImage(id: ID!, req: RestaurantImageRequest!): RestaurantImageResponse
+  deleteRestaurantImage(id: ID!): Boolean
+
+  # Restaurant Category mutations
+  createRestaurantCategory(req: RestaurantCategoryRequest!): RestaurantCategoryResponse
+  updateRestaurantCategory(id: ID!, req: RestaurantCategoryRequest!): RestaurantCategoryResponse
+  deleteRestaurantCategory(id: ID!): Boolean
+
+  # Alert mutations
+  createAlert(req: AlertRequest!): AlertResponse
+  updateAlert(id: ID!, req: AlertRequest!): AlertResponse
+  deleteAlert(id: ID!): Boolean
+
+  # Notification mutations
+  createNotification(req: NotificationRequest!): NotificationResponse
+  updateNotification(id: ID!, req: NotificationRequest!): NotificationResponse
+  markNotificationAsRead(id: ID!): NotificationResponse
+  deleteNotification(id: ID!): Boolean
+}
+
+# Input Types
+input ReviewRequest {
+  userId: ID!
+  restaurantId: ID!
+  dishId: ID
+  title: String
+  content: String
+  hasAudio: Boolean
+  hasImage: Boolean
+}
+
+input RestaurantRequest {
+  name: String!
+  description: String
+  addressId: ID
+  phone: String
+  email: String
+  website: String
+  priceRange: String
+  ownerId: ID
+}
+
+input DishRequest {
+  restaurantId: ID!
+  name: String!
+  description: String
+  priceCents: Int!
+  available: Boolean
+}
+
+input AddressRequest {
+  street: String!
+  site: String
+  neighborhood: String
+  city: String
+  stateRegion: String
+  postalCode: String
+  country: String!
+  latitude: Float
+  longitude: Float
+}
+
+input ReviewImageRequest {
+  reviewId: ID!
+  url: String!
+  altText: String
+}
+
+input ReviewAudioRequest {
+  reviewId: ID!
+  url: String!
+  durationSeconds: Int
+  transcription: String
+}
+
+input FavoriteRestaurantRequest {
+  userId: ID!
+  restaurantId: ID!
+}
+
+input FavoriteReviewRequest {
+  userId: ID!
+  reviewId: ID!
+}
+
+input RestaurantImageRequest {
+  restaurantId: ID!
+  url: String!
+  altText: String
+  uploadedBy: ID
+}
+
+input RestaurantCategoryRequest {
+  name: String!
+  icon: String!
+}
+
+input AlertRequest {
+  type: String!
+  restaurantId: ID
+  reviewId: ID
+  detail: String
+}
+
+input NotificationRequest {
+  userId: ID!
+  type: String!
+  message: String!
+  referenceId: ID
+}

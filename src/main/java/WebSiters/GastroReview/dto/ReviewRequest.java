@@ -12,8 +12,10 @@ public record ReviewRequest(
 
     UUID dishId,
 
+    @Size(max = 200, message = "Title must not exceed 200 characters")
     String title,
 
+    @Size(max = 5000, message = "Content must not exceed 5000 characters")
     String content,
 
     Boolean hasAudio,

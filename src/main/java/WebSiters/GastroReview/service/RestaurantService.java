@@ -4,77 +4,68 @@ import WebSiters.GastroReview.dto.RestaurantRequest;
 import WebSiters.GastroReview.dto.RestaurantResponse;
 import WebSiters.GastroReview.mapper.Mappers;
 import WebSiters.GastroReview.model.Restaurant;
-import WebSiters.GastroReview.model.Users;
 import WebSiters.GastroReview.repository.RestaurantRepository;
-import WebSiters.GastroReview.repository.UsersRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class RestaurantService {
 
     private final RestaurantRepository repo;
-    private final UsersRepository usersRepo;
 
-    public RestaurantService(RestaurantRepository repo, UsersRepository usersRepo) {
+    public RestaurantService(RestaurantRepository repo) {
         this.repo = repo;
-        this.usersRepo = usersRepo;
     }
 
-    public Page<RestaurantResponse> list(Pageable pageable) {
-        return repo.findAll(pageable).map(Mappers::toResponse);
+    @Transactional(readOnly = true)
+    public List<RestaurantResponse> listar() {
+        return repo.findAll().stream()
+                .map(Mappers::toResponse)
+                .toList();
     }
 
-    public RestaurantResponse get(UUID id) {
-        Restaurant r = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found"));
-        return Mappers.toResponse(r);
+    @Transactional(readOnly = true)
+    public RestaurantResponse obtener(UUID id) {
+        Restaurant restaurant = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found: " + id));
+        return Mappers.toResponse(restaurant);
     }
 
-    public RestaurantResponse create(RestaurantRequest in) {
-        Restaurant r = new Restaurant();
-        r.setName(in.getName());
-        r.setDescription(in.getDescription());
-        r.setPhone(in.getPhone());
-        r.setEmail(in.getEmail());
+    public RestaurantResponse crear(RestaurantRequest req) {
+        Restaurant restaurant = new Restaurant();
+        restaurant.setId(UUID.randomUUID());
+        restaurant.setName(req.name);
+        restaurant.setDescription(req.description);
+        restaurant.setPhone(req.phone);
+        restaurant.setEmail(req.email);
+        restaurant.setOwnerId(req.ownerId);
+        restaurant.setActive(true);
 
-        if (in.getOwnerId() != null) {
-            Users owner = usersRepo.findById(in.getOwnerId()).orElseThrow(() ->
-                    new ResponseStatusException(HttpStatus.BAD_REQUEST, "Owner user does not exist"));
-            r.setOwner(owner);
-        }
-
-        r = repo.save(r);
-        return Mappers.toResponse(r);
+        Restaurant saved = repo.save(restaurant);
+        return Mappers.toResponse(saved);
     }
 
-    public RestaurantResponse update(UUID id, RestaurantRequest in) {
-        Restaurant r = repo.findById(id).orElseThrow(() ->
-                new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found"));
+    public RestaurantResponse actualizar(UUID id, RestaurantRequest req) {
+        Restaurant existing = repo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant not found: " + id));
 
-        if (in.getName() != null) r.setName(in.getName());
-        if (in.getDescription() != null) r.setDescription(in.getDescription());
-        if (in.getPhone() != null) r.setPhone(in.getPhone());
-        if (in.getEmail() != null) r.setEmail(in.getEmail());
+        existing.setName(req.name);
+        existing.setDescription(req.description);
+        existing.setPhone(req.phone);
+        existing.setEmail(req.email);
+        existing.setOwnerId(req.ownerId);
 
-        if (in.getOwnerId() != null) {
-            Users owner = usersRepo.findById(in.getOwnerId()).orElseThrow(() ->
-                    new ResponseStatusException(HttpStatus.BAD_REQUEST, "Owner user does not exist"));
-            r.setOwner(owner);
-        }
-
-        r = repo.save(r);
-        return Mappers.toResponse(r);
+        Restaurant updated = repo.save(existing);
+        return Mappers.toResponse(updated);
     }
 
-    public void delete(UUID id) {
+    public void eliminar(UUID id) {
         if (!repo.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Restaurant not found");
+            throw new IllegalArgumentException("Restaurant not found: " + id);
         }
         repo.deleteById(id);
     }
